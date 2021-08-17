@@ -32,7 +32,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Marine Chess</string>
   </property>
   <property name="whatsThis">
    <string comment="cc" extracomment="assd"/>
@@ -65,8 +65,6 @@
       <height>741</height>
      </rect>
     </property>
-
-
     <widget class="QLabel" name="icon_0">
      <property name="geometry">
       <rect>
@@ -547,8 +545,6 @@
       <string/>
      </property>
     </widget>
-
-
     <widget class="QLabel" name="icon_30">
      <property name="geometry">
       <rect>
@@ -1029,11 +1025,6 @@
       <string/>
      </property>
     </widget>
-
-
-
-
-
    </widget>
    <widget class="QLabel" name="Map">
     <property name="geometry">
@@ -1282,6 +1273,7 @@
     </property>
     <addaction name="actionCreate_the_connection"/>
     <addaction name="actionConnect_to_server"/>
+    <addaction name="actionCancel_the_connection"/>
    </widget>
    <widget class="QMenu" name="menuPlay">
     <property name="title">
@@ -1312,6 +1304,14 @@
   <action name="actionAdmit_Defeat">
    <property name="text">
     <string>Admit Defeat</string>
+   </property>
+  </action>
+  <action name="actionCancel_the_connection">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Cancel the connection</string>
    </property>
   </action>
  </widget>

@@ -71,11 +71,6 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <item>
-          <property name="text">
-           <string>0.0.0.0</string>
-          </property>
-         </item>
         </widget>
        </item>
        <item>

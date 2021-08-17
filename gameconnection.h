@@ -23,7 +23,7 @@ public slots:
 
 private:
 
-    void acquiredNewMessageFromClient();
+    void acquiredNewConnectionFromClient();
     void readMessage();
     void writeMessage(const QString& message);
 

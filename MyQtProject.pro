@@ -15,6 +15,7 @@ SOURCES += \
     createconnectionwindow.cpp \
     game.cpp \
     gameconnection.cpp \
+    gamelogic.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -24,6 +25,7 @@ HEADERS += \
     createconnectionwindow.h \
     game.h \
     gameconnection.h \
+    gamelogic.h \
     mainwindow.h
 
 FORMS += \

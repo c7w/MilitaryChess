@@ -29,6 +29,9 @@ private slots:
     void on_start_connection(QString ip_addr);
 
 
+    void on_actionCancel_the_connection_triggered();
+
+    void setPrompt(const QString& message);
 
 private:
     Ui::MainWindow *ui;

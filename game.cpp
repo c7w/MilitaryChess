@@ -10,7 +10,7 @@ void Game::startConnection(QString role, QString ip_addr) {
     connection = new GameConnection(role, ip_addr);
     connection->moveToThread(&connectionThread);
 
-    // Generate Chess
+    // Generate Chess // Remove later
     QImage img(":/assets/image/chess_unknown.png");
     for (int i = 0; i < 60; ++i) {
         icons->at(i)->setPixmap(QPixmap::fromImage(img.scaled(icons->at(i)->size(), Qt::KeepAspectRatio)));
@@ -20,16 +20,28 @@ void Game::startConnection(QString role, QString ip_addr) {
     connect(this, &Game::initConnection, connection, &GameConnection::start);
     connect(connection, &GameConnection::MessageToGame, this, &Game::getData);
     connect(this, &Game::writeData, connection, &GameConnection::GameToMessage);
+    connectionThread.start();
 
     // Create the connection
     emit initConnection();
-
-    // TODO: Multi-thread
+    // Change game status
     if (role=="Server") {
         status = HOSTING;
     } else {
         status = CONNECTING;
     }
+}
+
+bool Game::cancelConnection() {
+    if(status == HOSTING || status == CONNECTING || status == READY) {
+        connection->deleteLater();
+        connectionThread.quit();
+        connectionThread.wait();
+        status = OFFLINE;
+        return true;
+    }
+    return false;
+
 }
 
 Game::~Game() {
@@ -38,7 +50,6 @@ Game::~Game() {
     delete icons;
 }
 
-void Game::getData(const QString & data) {
-    // TODO Parse Data
-    qDebug() << data;
+void Game::getData(const QString& data) {
+    GameLogic::MessageProcess(this, data);
 }

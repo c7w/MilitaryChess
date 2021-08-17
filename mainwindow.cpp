@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->Map->raise();
 
     this->game = new Game();
+    connect(this->game, &Game::setPrompt, this, &MainWindow::setPrompt);
 
     // Store icons into the Vector
     icons = new QVector<QLabel*>();
@@ -38,21 +39,42 @@ MainWindow::~MainWindow()
 
 // Slots function for starting host
 void MainWindow::on_start_host(QString ip_addr) {
+    // Rerender UI
     QImage img(":/assets/image/chessboard.png");
     ui->Map->setPixmap(QPixmap::fromImage(img).scaled(ui->Map->size(), Qt::KeepAspectRatio));
     ui->Map->lower();
+
     game->startConnection("Server", ip_addr);
+
+    // Update UI
+    ui->actionCreate_the_connection->setEnabled(false);
+    ui->actionConnect_to_server->setEnabled(false);
+    ui->actionCancel_the_connection->setEnabled(true);
+    this->setWindowTitle("Marine Chess (Server) Running at " + ip_addr);
 
 }
 
 // Slots function for connecting
 void MainWindow::on_start_connection(QString ip_addr) {
+    // Rerender UI
     game->startConnection("Client", ip_addr);
 
     QImage img(":/assets/image/chessboard.png");
     ui->Map->setPixmap(QPixmap::fromImage(img).scaled(ui->Map->size(), Qt::KeepAspectRatio));
     ui->Map->lower();
+
+    // Update UI
+    ui->actionCreate_the_connection->setEnabled(false);
+    ui->actionConnect_to_server->setEnabled(false);
+    ui->actionCancel_the_connection->setEnabled(true);
+    this->setWindowTitle("Marine Chess (Client) Connecting to " + ip_addr);
 }
+
+// Slots function for setting prompt
+void MainWindow::setPrompt(const QString& message) {
+    ui->Prompt->setText(message);
+}
+
 
 // Menubar: connect to server
 void MainWindow::on_actionConnect_to_server_triggered()
@@ -80,6 +102,20 @@ void MainWindow::on_actionCreate_the_connection_triggered()
     connect(ccw, &CreateConnectionWindow::startHost, this, &MainWindow::on_start_host);
 }
 
+// Menubar: cancel the connection
+void MainWindow::on_actionCancel_the_connection_triggered()
+{
+    if(game->cancelConnection()) {
+        // Update UI
+        ui->actionCreate_the_connection->setEnabled(true);
+        ui->actionConnect_to_server->setEnabled(true);
+        ui->actionCancel_the_connection->setEnabled(false);
+        this->setWindowTitle("Marine Chess (Connection Aborted)");
+        ui->Prompt->setText("<p style=\"color: #E3170D\">Connection Aborted!</p>");
+    }
+}
+
+
 // Mainwindow: Event Filter
 bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     if (obj == ui->widget) {
@@ -105,3 +141,5 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     }
     return QMainWindow::eventFilter(obj, event);
 }
+
+

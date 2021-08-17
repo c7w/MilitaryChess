@@ -7,12 +7,15 @@
 #include <QVector>
 #include <QLabel>
 #include "constants.h"
+#include "gamelogic.h"
 
+class GameLogic;
 
 enum GameStatus {
     OFFLINE,
     HOSTING,
     CONNECTING,
+    WAIT_PLAY_CONFIRMATION,
     READY,
     PLAYING,
     WAITING,
@@ -22,6 +25,9 @@ enum GameStatus {
 class Game : public QObject
 {
     Q_OBJECT
+
+friend class GameLogic;
+
 private:
     GameStatus status;
     QThread connectionThread;
@@ -31,10 +37,12 @@ private:
 
 signals:
     void initConnection();
+    void setPrompt(const QString& message);
     void writeData(const QString& str);
 
 public slots:
     void getData(const QString& str);
+
 
 public:
     Game();
@@ -47,6 +55,7 @@ public:
     void initIcon();
 
     void startConnection(QString role, QString ip_addr);
+    bool cancelConnection();
 
 };
 
