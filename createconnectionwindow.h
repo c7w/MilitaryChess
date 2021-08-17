@@ -21,7 +21,7 @@ private slots:
     void on_pushButton_clicked();
 
 signals:
-    void startHost(std::string IP_ADDR);
+    void startHost(QString IP_ADDR);
 
 private:
     Ui::CreateConnectionWindow *ui;

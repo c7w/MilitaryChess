@@ -8,9 +8,6 @@
 #include <QLabel>
 #include "constants.h"
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
 
 enum GameStatus {
     OFFLINE,
@@ -32,6 +29,13 @@ private:
 
     QVector<QLabel*>* icons;
 
+signals:
+    void initConnection();
+    void writeData(const QString& str);
+
+public slots:
+    void getData(const QString& str);
+
 public:
     Game();
     ~Game();
@@ -42,7 +46,7 @@ public:
     void setIcon(int pos, Constants::ChessPiece piece);
     void initIcon();
 
-    void startConnection(QString role);
+    void startConnection(QString role, QString ip_addr);
 
 };
 

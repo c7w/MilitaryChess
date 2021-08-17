@@ -25,7 +25,8 @@ private slots:
 
     void on_actionCreate_the_connection_triggered();
 
-    void on_start_host(std::string ip_addr);
+    void on_start_host(QString ip_addr);
+    void on_start_connection(QString ip_addr);
 
 
 

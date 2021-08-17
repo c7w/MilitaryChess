@@ -1,8 +1,17 @@
 #include "gameconnection.h"
 
-GameConnection::GameConnection(QString ip_addr, QObject *parent) : QObject(parent)
+GameConnection::GameConnection(QString role, QString ip_addr, QObject *parent) : QObject(parent)
 {
+    this->role = role;
     IP = QHostAddress(ip_addr);
+}
+
+void GameConnection::start(){
+    if (role == "Server") {
+        startServer();
+    } else {
+        startClient();
+    }
 }
 
 bool GameConnection::startServer() {
@@ -25,6 +34,7 @@ bool GameConnection::startClient() {
     client->connectToHost(IP, 23333);
 
     connect(client, &QTcpSocket::readyRead, this, &GameConnection::readMessage);
+    client->write("123");
     return true;
 
 }

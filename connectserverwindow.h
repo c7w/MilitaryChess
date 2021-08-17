@@ -17,6 +17,7 @@ public:
 
 signals:
     void BtnPressed(QString n);
+    void startConnect(QString ip_addr);
 
 public slots:
     void IpAppend(QString n);

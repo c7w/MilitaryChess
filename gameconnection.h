@@ -9,23 +9,26 @@ class GameConnection : public QObject
 {
     Q_OBJECT
 public:
-    explicit GameConnection(QString ip_addr, QObject *parent = nullptr);
-    bool startServer();
-    bool startClient();
+    explicit GameConnection(QString role, QString ip_addr, QObject *parent = nullptr);
     ~GameConnection();
 
 
 signals:
-    void MessageToGame(const QString str);
+    void MessageToGame(const QString& str);
 
 public slots:
     void GameToMessage(const QString& str);
+    void start();
+
 
 private:
 
     void acquiredNewMessageFromClient();
     void readMessage();
     void writeMessage(const QString& message);
+
+    bool startServer();
+    bool startClient();
 
     QString role;
     QTcpServer* server = nullptr;

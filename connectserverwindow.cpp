@@ -63,7 +63,7 @@ void ConnectServerWindow::on_pushButton_14_clicked()
 
     if (match) {
         // TODO: Socket
-
+        emit startConnect(ui->ip_addr->text());
 
         this->close();
     } else {

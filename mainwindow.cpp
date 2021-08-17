@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    // Generate UI
     ui->setupUi(this);
     QImage img(":/assets/image/chessboard_background.jpg");
     ui->Map->setPixmap(QPixmap::fromImage(img).scaled(ui->Map->size(), Qt::KeepAspectRatio));
@@ -35,38 +36,41 @@ MainWindow::~MainWindow()
     delete game;
 }
 
+// Slots function for starting host
+void MainWindow::on_start_host(QString ip_addr) {
+    QImage img(":/assets/image/chessboard.png");
+    ui->Map->setPixmap(QPixmap::fromImage(img).scaled(ui->Map->size(), Qt::KeepAspectRatio));
+    ui->Map->lower();
+    game->startConnection("Server", ip_addr);
+
+}
+
+// Slots function for connecting
+void MainWindow::on_start_connection(QString ip_addr) {
+    game->startConnection("Client", ip_addr);
+
+    QImage img(":/assets/image/chessboard.png");
+    ui->Map->setPixmap(QPixmap::fromImage(img).scaled(ui->Map->size(), Qt::KeepAspectRatio));
+    ui->Map->lower();
+}
+
+// Menubar: connect to server
 void MainWindow::on_actionConnect_to_server_triggered()
 {
+    if(game->getStatus() != OFFLINE) return;
     delete childWindow;
     ConnectServerWindow* ccw = new ConnectServerWindow(this);
     ccw->setWindowTitle("Connect to Host");
     ccw->show();
 
     childWindow = ccw;
-
+    connect(ccw, &ConnectServerWindow::startConnect, this, &MainWindow::on_start_connection);
 }
 
-
-
-void MainWindow::on_start_host(std::string ip_addr) {
-    // Set status
-    // role = "Server";
-    // server = new QTcpServer();
-    // server->listen( ip_addr, 23333);
-    // Render UI
-    // map = new QPixmap("/assets/images/chessboard.png");
-    // ui->Map->setPixmap(*map);
-    QImage img(":/assets/image/chessboard.png");
-    ui->Map->setPixmap(QPixmap::fromImage(img).scaled(ui->Map->size(), Qt::KeepAspectRatio));
-    ui->Map->lower();
-    game->startConnection("Server");
-
-}
-
-
-
+// Menubar: create the connection
 void MainWindow::on_actionCreate_the_connection_triggered()
 {
+    if(game->getStatus() != OFFLINE) return;
     delete childWindow;
     CreateConnectionWindow* ccw = new CreateConnectionWindow(this);
     ccw->setWindowTitle("Create Host");
@@ -76,11 +80,11 @@ void MainWindow::on_actionCreate_the_connection_triggered()
     connect(ccw, &CreateConnectionWindow::startHost, this, &MainWindow::on_start_host);
 }
 
+// Mainwindow: Event Filter
 bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     if (obj == ui->widget) {
         if (event->type() == QEvent::MouseButtonRelease) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            qDebug() << "Ate key press" << mouseEvent;
             if (mouseEvent->button() == Qt::LeftButton) emit pressedPiece(-1);
             return true;
         } else {
@@ -92,7 +96,6 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
         if (obj == icons->at(i)) {
             if (event->type() == QEvent::MouseButtonRelease) {
                 QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-                qDebug() << "Ate key press" << mouseEvent;
                 if (mouseEvent->button() == Qt::LeftButton) emit pressedPiece(i);
                 return true;
             } else {

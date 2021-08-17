@@ -6,24 +6,29 @@ Game::Game()
 
 }
 
-void Game::startConnection(QString role) {
-    connection = new GameConnection("0.0.0.0");
+void Game::startConnection(QString role, QString ip_addr) {
+    connection = new GameConnection(role, ip_addr);
     connection->moveToThread(&connectionThread);
 
     // Generate Chess
     QImage img(":/assets/image/chess_unknown.png");
     for (int i = 0; i < 60; ++i) {
-        qDebug() << i << " " << icons->at(i) << "\n";
         icons->at(i)->setPixmap(QPixmap::fromImage(img.scaled(icons->at(i)->size(), Qt::KeepAspectRatio)));
     }
+
+    // Establish multi-thread connection
+    connect(this, &Game::initConnection, connection, &GameConnection::start);
+    connect(connection, &GameConnection::MessageToGame, this, &Game::getData);
+    connect(this, &Game::writeData, connection, &GameConnection::GameToMessage);
+
+    // Create the connection
+    emit initConnection();
 
     // TODO: Multi-thread
     if (role=="Server") {
         status = HOSTING;
-        // connection->startServer();
     } else {
         status = CONNECTING;
-        // connection->startClient();
     }
 }
 
@@ -31,4 +36,9 @@ Game::~Game() {
     connectionThread.quit();
     connectionThread.wait();
     delete icons;
+}
+
+void Game::getData(const QString & data) {
+    // TODO Parse Data
+    qDebug() << data;
 }

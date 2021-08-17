@@ -64,19 +64,18 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="ip_addr">
+        <widget class="QComboBox" name="ip_addr">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>3</horstretch>
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="text">
-          <string>-</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
+         <item>
+          <property name="text">
+           <string>0.0.0.0</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item>
