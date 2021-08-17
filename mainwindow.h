@@ -17,6 +17,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+signals:
+    void pressedPiece(int pos);
+
 private slots:
     void on_actionConnect_to_server_triggered();
 
@@ -24,12 +27,15 @@ private slots:
 
     void on_start_host(std::string ip_addr);
 
+
+
 private:
     Ui::MainWindow *ui;
     QDialog* childWindow = nullptr;
-
+    QVector<QLabel*>* icons;
 
 protected:
     Game* game;
+    bool eventFilter(QObject *obj, QEvent *event);
 };
 #endif // MAINWINDOW_H

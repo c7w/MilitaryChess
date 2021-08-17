@@ -4,6 +4,13 @@
 #include <QObject>
 #include "gameconnection.h"
 #include <QThread>
+#include <QVector>
+#include <QLabel>
+#include "constants.h"
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
 
 enum GameStatus {
     OFFLINE,
@@ -23,11 +30,17 @@ private:
     QThread connectionThread;
     GameConnection* connection;
 
+    QVector<QLabel*>* icons;
+
 public:
     Game();
     ~Game();
 
     GameStatus getStatus() { return status; }    
+    void setIcons(QVector<QLabel*>* icons) { this->icons = icons; }
+
+    void setIcon(int pos, Constants::ChessPiece piece);
+    void initIcon();
 
     void startConnection(QString role);
 

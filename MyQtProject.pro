@@ -11,6 +11,7 @@ CONFIG += c++11
 
 SOURCES += \
     connectserverwindow.cpp \
+    constants.cpp \
     createconnectionwindow.cpp \
     game.cpp \
     gameconnection.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
 
 HEADERS += \
     connectserverwindow.h \
+    constants.h \
     createconnectionwindow.h \
     game.h \
     gameconnection.h \
