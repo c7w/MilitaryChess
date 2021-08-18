@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     for(int i = 0; i < 60; ++i){
         icons->at(i)->installEventFilter(this);
     }
+    connect(this, &MainWindow::pressedBoard, this->game, &Game::onPressedBoard);
 }
 
 MainWindow::~MainWindow()
@@ -121,7 +122,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     if (obj == ui->widget) {
         if (event->type() == QEvent::MouseButtonRelease) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            if (mouseEvent->button() == Qt::LeftButton) emit pressedPiece(-1);
+            if (mouseEvent->button() == Qt::LeftButton) emit pressedBoard(-1);
             return true;
         } else {
             return false;
@@ -132,7 +133,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
         if (obj == icons->at(i)) {
             if (event->type() == QEvent::MouseButtonRelease) {
                 QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-                if (mouseEvent->button() == Qt::LeftButton) emit pressedPiece(i);
+                if (mouseEvent->button() == Qt::LeftButton) emit pressedBoard(i);
                 return true;
             } else {
                 return false;

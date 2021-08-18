@@ -33,6 +33,6 @@ QVector<QImage> Constants::Images = {
     QImage(":/assets/image/chesspieces/YingZhangR.png"),
     QImage(":/assets/image/chesspieces/ZhaDanB.png"),
     QImage(":/assets/image/chesspieces/ZhaDanR.png"),
-    QImage(":/assets/image/chessboard_background.jpg"),
+    QImage(":/assets/image/chess_unknown.png"),
     QImage(),
 };

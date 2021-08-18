@@ -18,7 +18,7 @@ public:
     ~MainWindow();
 
 signals:
-    void pressedPiece(int pos);
+    void pressedBoard(int pos);
 
 private slots:
     void on_actionConnect_to_server_triggered();

@@ -18,8 +18,8 @@ enum GameStatus {
     CONNECTING,
     WAIT_PLAY_CONFIRMATION,
     READY,
-    PLAYING,
-    WAITING,
+    PLAYING_WAITING,
+    PLAYING_THINKING,
     END
 };
 
@@ -33,8 +33,14 @@ private:
     GameStatus status;
     QThread connectionThread;
     GameConnection* connection;
+    void setIcon(int pos, EnumChessPiece piece);
 
-    QVector<QLabel*>* icons;
+    QVector<QLabel*>* icons; // [0,60), namely sixty labels
+
+    // Ingame
+    QVector<int> board; // Map [0, 60) to [0, 50], while 0 means there does not exist a chess piece, and 1~50 refers to initialized ID
+    QVector<ChessPiece*> pieces = {nullptr,}; // [1, 50], takes control of 50 chess pieces in initID order.
+    struct {Faction ColorMe; int TurnCount; Faction ColorNow; QString LeftTime; } GameInfo;
 
 signals:
     void initConnection();
@@ -43,6 +49,7 @@ signals:
 
 public slots:
     void getData(const QString& str);
+    void onPressedBoard(int pos);
 
 
 public:
@@ -50,13 +57,23 @@ public:
     ~Game();
 
     GameStatus getStatus() { return status; }    
-    void setIcons(QVector<QLabel*>* icons) { this->icons = icons; }
 
-    void setIcon(int pos, EnumChessPiece piece);
-    void initIcon();
+    void setIcons(QVector<QLabel*>* icons) { this->icons = icons; }
 
     void startConnection(QString role, QString ip_addr);
     bool cancelConnection();
+
+    // Init game
+    void initChessboard(); // Generate 50 new Chess pieces and shuffle chess pieces across chess board;
+    void initIcon(); // Render 60 icons
+    void updateIcon(int pos);
+
+    // Ingame
+//    int getInitIDfromBoard(int pos) {return this->board[pos];}
+//    void setBoard(int pos, int initID) {this->board[pos] = initID;}
+//    ChessPiece* getPieces(int initID) {return this->pieces[initID];}
+
+
 
 };
 

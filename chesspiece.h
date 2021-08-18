@@ -26,15 +26,23 @@ public:
     bool isInCamp = false;
 
 
-    explicit ChessPiece(int initID, QObject *parent = nullptr) : InitializedID(initID){}
+    explicit ChessPiece(int initID) : InitializedID(initID){}
 
     void setPos(int n) { currentPos = n; }
     int getPos() const {return currentPos;}
+
+    void setRevealed() { this->revealed = true; }
+    void setEaten() { this->revealed = true; }
+
+    EnumChessPiece getEnumChessPiece() {return (EnumChessPiece)(this->getArmType() * 2 + this->getFaction()); }
+    EnumChessPiece getEnumChessPieceIcon() {return this->revealed ? getEnumChessPiece() : Unknown; }
 
     QImage& getImage() {
         EnumChessPiece currPiece = (EnumChessPiece)(this->getArmType() * 2 + this->getFaction());
         return (this->revealed) ? Constants::getImage(currPiece) : Constants::getImage(Empty);
     }
+
+    static ChessPiece* getChesePiece(int initID);
 };
 
 // Generating code START here.
@@ -42,6 +50,7 @@ public:
 class ChessPieceDiLei : public ChessPiece
 {
 public:
+    explicit ChessPieceDiLei(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return DiLei; }
 
     int canEat(ChessPiece* B) override {
@@ -71,6 +80,7 @@ public:
 class ChessPieceGongBing : public ChessPiece
 {
 public:
+    explicit ChessPieceGongBing(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return GongBing; }
 
     int canEat(ChessPiece* B) override {
@@ -100,6 +110,7 @@ public:
 class ChessPieceJunQi : public ChessPiece
 {
 public:
+    explicit ChessPieceJunQi(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return JunQi; }
 
     int canEat(ChessPiece* B) override {
@@ -129,6 +140,7 @@ public:
 class ChessPieceJunZhang : public ChessPiece
 {
 public:
+    explicit ChessPieceJunZhang(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return JunZhang; }
 
     int canEat(ChessPiece* B) override {
@@ -158,6 +170,7 @@ public:
 class ChessPieceLianZhang : public ChessPiece
 {
 public:
+    explicit ChessPieceLianZhang(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return LianZhang; }
 
     int canEat(ChessPiece* B) override {
@@ -187,6 +200,7 @@ public:
 class ChessPieceLvZhang : public ChessPiece
 {
 public:
+    explicit ChessPieceLvZhang(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return LvZhang; }
 
     int canEat(ChessPiece* B) override {
@@ -216,6 +230,7 @@ public:
 class ChessPiecePaiZhang : public ChessPiece
 {
 public:
+    explicit ChessPiecePaiZhang(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return PaiZhang; }
 
     int canEat(ChessPiece* B) override {
@@ -245,6 +260,7 @@ public:
 class ChessPieceShiZhang : public ChessPiece
 {
 public:
+    explicit ChessPieceShiZhang(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return ShiZhang; }
 
     int canEat(ChessPiece* B) override {
@@ -274,6 +290,7 @@ public:
 class ChessPieceSiLing : public ChessPiece
 {
 public:
+    explicit ChessPieceSiLing(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return SiLing; }
 
     int canEat(ChessPiece* B) override {
@@ -303,6 +320,7 @@ public:
 class ChessPieceTuanZhang : public ChessPiece
 {
 public:
+    explicit ChessPieceTuanZhang(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return TuanZhang; }
 
     int canEat(ChessPiece* B) override {
@@ -332,6 +350,7 @@ public:
 class ChessPieceYingZhang : public ChessPiece
 {
 public:
+    explicit ChessPieceYingZhang(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return YingZhang; }
 
     int canEat(ChessPiece* B) override {
@@ -361,6 +380,7 @@ public:
 class ChessPieceZhaDan : public ChessPiece
 {
 public:
+    explicit ChessPieceZhaDan(int initID) : ChessPiece(initID) {}
     ArmType getArmType() override { return ZhaDan; }
 
     int canEat(ChessPiece* B) override {
