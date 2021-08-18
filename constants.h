@@ -20,7 +20,7 @@ enum ArmType {
     ZhaDan
 };
 
-enum Faction {Blue, Red};
+enum Faction {Blue, Red, None};
 
 enum EnumChessPiece {
     DiLeiB,
@@ -57,15 +57,17 @@ class Constants : public QObject
     Q_OBJECT
 
 private:
-    // Images
     static QVector<QImage> Images;
-
-
+    static QVector<QVector<int>> Edges;
 
 
 public:
     explicit Constants(QObject *parent = nullptr);
 
+    static QVector<int> Camp; // x & x+25
+
+    static void GenerateEdge();
+    static int hasEdge(int a, int b);
     static QImage& getImage(EnumChessPiece piece) { return Images[(int)piece]; }
 
 

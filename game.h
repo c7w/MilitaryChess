@@ -28,6 +28,7 @@ class Game : public QObject
     Q_OBJECT
 
 friend class GameLogic;
+struct Info {Faction ColorMe = None; int TurnCount=0; Faction ColorNow=None; QString LeftTime=""; };
 
 private:
     GameStatus status;
@@ -40,10 +41,11 @@ private:
     // Ingame
     QVector<int> board; // Map [0, 60) to [0, 50], while 0 means there does not exist a chess piece, and 1~50 refers to initialized ID
     QVector<ChessPiece*> pieces = {nullptr,}; // [1, 50], takes control of 50 chess pieces in initID order.
-    struct {Faction ColorMe; int TurnCount; Faction ColorNow; QString LeftTime; } GameInfo;
+
 
 signals:
     void initConnection();
+    void setInfo(const Info info);
     void setPrompt(const QString& message);
     void writeData(const QString& str);
 
@@ -55,6 +57,9 @@ public slots:
 public:
     Game();
     ~Game();
+
+
+    struct Info GameInfo;
 
     GameStatus getStatus() { return status; }    
 

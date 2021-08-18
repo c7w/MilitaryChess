@@ -3,7 +3,7 @@
 Game::Game()
     : status(OFFLINE)
 {
-
+    Constants::GenerateEdge();
 }
 
 void Game::startConnection(QString role, QString ip_addr) {
@@ -84,10 +84,9 @@ void Game::initChessboard() {
 
     // Fill the shuffled result into the board
     int tempPos = 0;
-    QVector<int> camp = {11, 13, 17, 21, 23};
     for(int i = 0; i < 60; ++i) {
         bool notSkip = true;
-        for(auto x: camp) {
+        for(auto x: Constants::Camp) {
             if(i == x || i == x+25) {
                 // Just leave it blank!
                 this->board.push_back(0);

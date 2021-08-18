@@ -151,7 +151,7 @@ public:
         // Judge if can eat... After generating codes, finish here.
         // ZhaDan, SiLing, JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi, DiLei
         QVector<ArmType> canEat = { ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi };
-        QVector<ArmType> canEatWhileSelfDestroy = { JunZhang, DiLei, ZhaDan };
+        QVector<ArmType> canEatWhileSelfDestroy = { JunZhang, ZhaDan };
 
         // Return 1 if can eat
         // Return 2 if can eat while self-destroyed
@@ -181,7 +181,7 @@ public:
         // Judge if can eat... After generating codes, finish here.
         // ZhaDan, SiLing, JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi, DiLei
         QVector<ArmType> canEat = { PaiZhang, GongBing, JunQi };
-        QVector<ArmType> canEatWhileSelfDestroy = { LianZhang, DiLei, ZhaDan };
+        QVector<ArmType> canEatWhileSelfDestroy = { LianZhang, ZhaDan };
 
         // Return 1 if can eat
         // Return 2 if can eat while self-destroyed
@@ -211,7 +211,7 @@ public:
         // Judge if can eat... After generating codes, finish here.
         // ZhaDan, SiLing, JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi, DiLei
         QVector<ArmType> canEat = { TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi };
-        QVector<ArmType> canEatWhileSelfDestroy = { LvZhang, DiLei, ZhaDan };
+        QVector<ArmType> canEatWhileSelfDestroy = { LvZhang, ZhaDan };
 
         // Return 1 if can eat
         // Return 2 if can eat while self-destroyed
@@ -241,7 +241,7 @@ public:
         // Judge if can eat... After generating codes, finish here.
         // ZhaDan, SiLing, JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi, DiLei
         QVector<ArmType> canEat = {GongBing, JunQi };
-        QVector<ArmType> canEatWhileSelfDestroy = { PaiZhang, DiLei , ZhaDan};
+        QVector<ArmType> canEatWhileSelfDestroy = { PaiZhang , ZhaDan};
 
         // Return 1 if can eat
         // Return 2 if can eat while self-destroyed
@@ -271,7 +271,7 @@ public:
         // Judge if can eat... After generating codes, finish here.
         // ZhaDan, SiLing, JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi, DiLei
         QVector<ArmType> canEat = {LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi };
-        QVector<ArmType> canEatWhileSelfDestroy = {ShiZhang, DiLei, ZhaDan };
+        QVector<ArmType> canEatWhileSelfDestroy = {ShiZhang, ZhaDan };
 
         // Return 1 if can eat
         // Return 2 if can eat while self-destroyed
@@ -301,7 +301,7 @@ public:
         // Judge if can eat... After generating codes, finish here.
         // ZhaDan, SiLing, JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi, DiLei
         QVector<ArmType> canEat = { JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi };
-        QVector<ArmType> canEatWhileSelfDestroy = { SiLing, DiLei, ZhaDan };
+        QVector<ArmType> canEatWhileSelfDestroy = { SiLing, ZhaDan };
 
         // Return 1 if can eat
         // Return 2 if can eat while self-destroyed
@@ -331,7 +331,7 @@ public:
         // Judge if can eat... After generating codes, finish here.
         // ZhaDan, SiLing, JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi, DiLei
         QVector<ArmType> canEat = { YingZhang, LianZhang, PaiZhang, GongBing, JunQi };
-        QVector<ArmType> canEatWhileSelfDestroy = {  TuanZhang, DiLei, ZhaDan };
+        QVector<ArmType> canEatWhileSelfDestroy = {  TuanZhang, ZhaDan };
 
         // Return 1 if can eat
         // Return 2 if can eat while self-destroyed
@@ -361,7 +361,7 @@ public:
         // Judge if can eat... After generating codes, finish here.
         // ZhaDan, SiLing, JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi, DiLei
         QVector<ArmType> canEat = { LianZhang, PaiZhang, GongBing, JunQi };
-        QVector<ArmType> canEatWhileSelfDestroy = { YingZhang, DiLei, ZhaDan};
+        QVector<ArmType> canEatWhileSelfDestroy = { YingZhang, ZhaDan};
 
         // Return 1 if can eat
         // Return 2 if can eat while self-destroyed

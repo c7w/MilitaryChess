@@ -55,7 +55,10 @@
 
 + 还有一个 GAME_STATUS == READY 的 cancel 逻辑没有写
 + 断线的业务逻辑
-+ 吃子的顺序
 + Game::onPressedBoard 开了调试项目
 + 通信
 + 先写本地：可达性 可吃子
+
++ 走游戏流程 计时器 判胜负
++ 军旗最后被吃
++ 每一个 Turn 的流程：

@@ -12,11 +12,13 @@ class GameLogic : public QObject
     Q_OBJECT
 private:
 
-    struct AR {QVector<int> Approachable; QVector<int> Eatable; QVector<int> EatableWhileSelfDestroyed;};
+    struct AR {QSet<int> Approachable; QSet<int> Eatable; QSet<int> EatableWhileSelfDestroyed;};
 
     // Related to click event
     static int OperationRecord;
     static AR AffectedRecord;
+
+    static void DFS(Game* game, int initId, int next);
     static void GenerateRecordForPosition(Game* game, int pos);
 
     static void MovePiece(Game* game, int from, int to);
