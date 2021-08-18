@@ -7,6 +7,7 @@
 #include <QVector>
 #include <QLabel>
 #include "constants.h"
+#include "chesspiece.h"
 #include "gamelogic.h"
 
 class GameLogic;
@@ -51,7 +52,7 @@ public:
     GameStatus getStatus() { return status; }    
     void setIcons(QVector<QLabel*>* icons) { this->icons = icons; }
 
-    void setIcon(int pos, Constants::ChessPiece piece);
+    void setIcon(int pos, EnumChessPiece piece);
     void initIcon();
 
     void startConnection(QString role, QString ip_addr);

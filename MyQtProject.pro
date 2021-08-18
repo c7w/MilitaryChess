@@ -20,6 +20,7 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+    chesspiece.h \
     connectserverwindow.h \
     constants.h \
     createconnectionwindow.h \

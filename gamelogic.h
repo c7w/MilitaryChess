@@ -11,9 +11,10 @@ class GameLogic : public QObject
     Q_OBJECT
 public:
     explicit GameLogic(QObject *parent = nullptr);
+    static void MessageProcess(Game* game, const QString& message);
 
 public:
-    static void MessageProcess(Game* game, const QString& message);
+
 
 signals:
 

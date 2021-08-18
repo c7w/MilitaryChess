@@ -6,8 +6,8 @@
 
 当 Client 连接到 Server 之后：
 
-+ Server 向 Client 发送 `200` 信号，Client 接收后切换为 Ready
-+ 之后 Client 向 Server 发送 `200` 信号，Server 接收后切换为 Ready
++ Server 向 Client 发送 `200` 信号，Client 接收后切换为 WAIT_PLAY_CONFIRMATION
++ 之后 Client 向 Server 发送 `200` 信号，Server 接收后切换为 WAIT_PLAY_CONFIRMATION
 
 ### Game <-> GameConnection (多线程间)
 
@@ -20,10 +20,17 @@
   + Color: 报文的颜色(六位十六进制数，或是HTML支持的颜色标签)，如ff0000
   + Message: 说明文字.
 
+## 类的设计
 
+### Game
+
+以 GameLogic 类为友元.
+
++ 棋盘 board: `Vector<ChessPiece*>`
++ 
 
 ## TODO
 
 + 还有一个 GAME_STATUS == READY 的 cancel 逻辑没有写
 + 断线的业务逻辑
-+ edit constants
++ 吃子的顺序

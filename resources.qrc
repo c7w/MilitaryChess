@@ -3,5 +3,29 @@
         <file>assets/image/chessboard.png</file>
         <file>assets/image/chessboard_background.jpg</file>
         <file>assets/image/chess_unknown.png</file>
+        <file>assets/image/chesspieces/DiLeiB.png</file>
+        <file>assets/image/chesspieces/DiLeiR.png</file>
+        <file>assets/image/chesspieces/GongBingB.png</file>
+        <file>assets/image/chesspieces/GongBingR.png</file>
+        <file>assets/image/chesspieces/JunQiB.png</file>
+        <file>assets/image/chesspieces/JunQiR.png</file>
+        <file>assets/image/chesspieces/JunZhangB.png</file>
+        <file>assets/image/chesspieces/JunZhangR.png</file>
+        <file>assets/image/chesspieces/LianZhangB.png</file>
+        <file>assets/image/chesspieces/LianZhangR.png</file>
+        <file>assets/image/chesspieces/LvZhangB.png</file>
+        <file>assets/image/chesspieces/LvZhangR.png</file>
+        <file>assets/image/chesspieces/PaiZhangB.png</file>
+        <file>assets/image/chesspieces/PaiZhangR.png</file>
+        <file>assets/image/chesspieces/ShiZhangB.png</file>
+        <file>assets/image/chesspieces/ShiZhangR.png</file>
+        <file>assets/image/chesspieces/SiLingB.png</file>
+        <file>assets/image/chesspieces/SiLingR.png</file>
+        <file>assets/image/chesspieces/TuanZhangB.png</file>
+        <file>assets/image/chesspieces/TuanZhangR.png</file>
+        <file>assets/image/chesspieces/YingZhangB.png</file>
+        <file>assets/image/chesspieces/YingZhangR.png</file>
+        <file>assets/image/chesspieces/ZhaDanB.png</file>
+        <file>assets/image/chesspieces/ZhaDanR.png</file>
     </qresource>
 </RCC>

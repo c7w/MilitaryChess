@@ -53,3 +53,7 @@ Game::~Game() {
 void Game::getData(const QString& data) {
     GameLogic::MessageProcess(this, data);
 }
+
+void Game::setIcon(int pos, EnumChessPiece piece) {
+    this->icons->at(pos)->setPixmap(QPixmap::fromImage(Constants::getImage(piece).scaled(this->icons->at(pos)->size(), Qt::KeepAspectRatio)));
+}
