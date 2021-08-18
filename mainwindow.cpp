@@ -51,7 +51,7 @@ void MainWindow::on_start_host(QString ip_addr) {
     ui->actionCreate_the_connection->setEnabled(false);
     ui->actionConnect_to_server->setEnabled(false);
     ui->actionCancel_the_connection->setEnabled(true);
-    this->setWindowTitle("Marine Chess (Server) Running at " + ip_addr);
+    this->setWindowTitle("Military Chess (Server) Running at " + ip_addr);
 
 }
 
@@ -68,7 +68,7 @@ void MainWindow::on_start_connection(QString ip_addr) {
     ui->actionCreate_the_connection->setEnabled(false);
     ui->actionConnect_to_server->setEnabled(false);
     ui->actionCancel_the_connection->setEnabled(true);
-    this->setWindowTitle("Marine Chess (Client) Connecting to " + ip_addr);
+    this->setWindowTitle("Military Chess (Client) Connecting to " + ip_addr);
 }
 
 // Slots function for setting prompt
@@ -111,7 +111,7 @@ void MainWindow::on_actionCancel_the_connection_triggered()
         ui->actionCreate_the_connection->setEnabled(true);
         ui->actionConnect_to_server->setEnabled(true);
         ui->actionCancel_the_connection->setEnabled(false);
-        this->setWindowTitle("Marine Chess (Connection Aborted)");
+        this->setWindowTitle("Military Chess (Connection Aborted)");
         ui->Prompt->setText("<p style=\"color: #E3170D\">Connection Aborted!</p>");
     }
 }

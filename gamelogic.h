@@ -12,6 +12,8 @@ class GameLogic : public QObject
     Q_OBJECT
 private:
 
+    static QString WriteChessboardToString(Game* game);
+
     struct AR {QSet<int> Approachable; QSet<int> Eatable; QSet<int> EatableWhileSelfDestroyed;};
 
     // Related to click event

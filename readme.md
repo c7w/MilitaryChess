@@ -2,12 +2,30 @@
 
 ### Server <-> Client (进程间)
 
-#### `200` OK
+#### `200` Connection Established
 
 当 Client 连接到 Server 之后：
 
-+ Server 向 Client 发送 `200` 信号，Client 接收后切换为 WAIT_PLAY_CONFIRMATION
-+ 之后 Client 向 Server 发送 `200` 信号，Server 接收后切换为 WAIT_PLAY_CONFIRMATION
++ Server 向 Client 发送 `200` 信号，Client 接收后返回 `200` 信号，完成第一次通信
++ Server 在收到 `200` 信号后，会发送 `201` 信号
+
+#### `201` InitChessboard
+
+
+
+#### `300` Unreveal Chess Piece
+
+
+
+#### `301` Move Chess Piece
+
+
+
+#### `302` Eat Chess Piece
+
+
+
+#### `303` Eat Chess Piece and Destroy Self
 
 ### Game <-> GameConnection (多线程间)
 

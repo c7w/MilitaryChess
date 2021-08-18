@@ -14,6 +14,15 @@ QString formatPrompt(QString color, QString message) {
 int GameLogic::OperationRecord = {-1,};
 GameLogic::AR GameLogic::AffectedRecord = {{}, {}, {}};
 
+QString GameLogic::WriteChessboardToString(Game* game) {
+    QString result = QString::number(game->board[0]);
+    for (int i = 1; i < 60; ++i) {
+        result += ' ';
+        result += QString::number(game->board[i]);
+    }
+    return result;
+}
+
 void GameLogic::MessageProcess(Game* game, const QString& raw_message) {
     QVector<QString> args;
 
@@ -35,22 +44,70 @@ void GameLogic::MessageProcess(Game* game, const QString& raw_message) {
         emit game->setPrompt(formatPrompt(args[1], message));
     }
 
-    // 200: set GAME.STATUS to READY, resend a 200 if changed
+    // 200: Connection Established
     if(args[0] == "200") {
         if(game->getStatus() == HOSTING) {
             // TODO: Create chessboard
             game->initChessboard();
             game->initIcon();
             // TODO: Send chessboard
-
-            emit game->setPrompt(formatPrompt("872657", "Click 'Play' to get ready!"));
+            emit game->writeData("201 " + WriteChessboardToString(game));
+            emit game->setPrompt(formatPrompt("6F46F1", "Sending data to server!"));
         } else if (game->getStatus() == CONNECTING) {
-            emit game->setPrompt(formatPrompt("872657", "Click 'Play' to get ready!"));
-            emit game->writeData("200");
+            emit game->setPrompt(formatPrompt("6F46F1", "Receiving data from server..."));
+            emit game->writeData("200 OK");
         }
-        game->status = WAIT_PLAY_CONFIRMATION;
+        return;
+    }
+
+    // 201 InitChessboard
+    if(args[0] == "201") {
+        if(game->getStatus()==HOSTING) {
+
+            game->status = WAIT_PLAY_CONFIRMATION;
+            emit game->setPrompt(formatPrompt("872657", "Please get ready!"));
+
+        } else if (game->getStatus() == CONNECTING){
+            // Generate
+            for (int i = 1; i <= 50; ++i) {
+                game->pieces.push_back(ChessPiece::getChesePiece(i));
+            }
+
+            for(int i = 1; i <= 60; ++i) {
+                game->board.push_back(args[i].toInt());
+            }
+            game->initIcon();
+            emit game->setPrompt(formatPrompt("872657", "Please get ready!"));
+            game->status = WAIT_PLAY_CONFIRMATION;
+            emit game->writeData("201 Received");
+        }
+        return;
+    }
+
+    // 300 Unreveal chess
+    if(args[0] == "300") {
+        int pos = args[1].toInt();
+        game->pieces[game->board[pos]]->setRevealed();
+        game->updateIcon(pos);
+        return;
+    }
+    // 301 Move chess
+    if(args[0] == "301") {
+        MovePiece(game, args[1].toInt(), args[2].toInt());
+        return;
+    }
+    // 302 Eat chess
+    if(args[0] == "302") {
+        EatPiece(game, args[1].toInt(), args[2].toInt());
+        return;
+    }
+    // 303 Eat chess and self-destroy
+    if(args[0] == "303") {
+        EatPieceWhileSelfDestroyed(game, args[1].toInt(), args[2].toInt());
+        return;
     }
 }
+//
 
 void GameLogic::DFS(Game *game, int initId, int next) {
     if ( AffectedRecord.Approachable.contains(next) || AffectedRecord.Eatable.contains(next) || AffectedRecord.EatableWhileSelfDestroyed.contains(next)) return;
@@ -132,6 +189,8 @@ void GameLogic::MovePiece(Game *game, int from, int to) {
 
     game->updateIcon(from);
     game->updateIcon(to);
+
+
 }
 
 void GameLogic::EatPiece(Game *game, int from, int to) {
@@ -151,6 +210,7 @@ void GameLogic::EatPiece(Game *game, int from, int to) {
 
     game->updateIcon(from);
     game->updateIcon(to);
+
 }
 
 void GameLogic::EatPieceWhileSelfDestroyed(Game *game, int from, int to) {
@@ -161,8 +221,10 @@ void GameLogic::EatPieceWhileSelfDestroyed(Game *game, int from, int to) {
 
     game->board[from] = 0;
     game->board[to] = 0;
+
     game->updateIcon(from);
     game->updateIcon(to);
+
 }
 
 void GameLogic::clickBoard(Game *game, int pos) {
@@ -171,10 +233,10 @@ void GameLogic::clickBoard(Game *game, int pos) {
     bool related = false; // Whether pass this turn
 
     // Reveal Unknown
-    if (pos > 0 && game->board[pos] != 0 && !game->pieces[game->board[pos]]->revealed) {
+    if (pos >= 0 && game->board[pos] != 0 && !game->pieces[game->board[pos]]->revealed) {
         game->pieces[game->board[pos]]->setRevealed();
-        qDebug() << "SetRevealed " << pos;
         game->updateIcon(pos);
+        emit game->writeData("300 " + QString::number(pos));
         related = true;
     }
 
@@ -184,18 +246,21 @@ void GameLogic::clickBoard(Game *game, int pos) {
         foreach(x, AffectedRecord.Approachable) {
             if ( pos == x ) {
                 MovePiece(game, OperationRecord, pos);
+                emit game->writeData("301 " + QString::number(OperationRecord) + " " + QString::number(pos));
                 related = true;
             }
         }
         foreach(x, AffectedRecord.Eatable) {
             if ( pos == x ) {
                 EatPiece(game, OperationRecord, pos);
+                emit game->writeData("302 " + QString::number(OperationRecord) + " " + QString::number(pos));
                 related = true;
             }
         }
         foreach(x, AffectedRecord.EatableWhileSelfDestroyed) {
             if( pos == x ){
                 EatPieceWhileSelfDestroyed(game, OperationRecord, pos);
+                emit game->writeData("303 " + QString::number(OperationRecord) + " " + QString::number(pos));
                 related = true;
             }
         }

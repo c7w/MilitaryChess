@@ -62,7 +62,6 @@ void Game::initIcon() {
 
 void Game::updateIcon(int pos) {
     int pieceInitID = this->board[pos];
-    qDebug() << "Board " << pos << "ID " << pieceInitID;
     if(pieceInitID == 0) {
         this->setIcon(pos, Empty);
     } else {

@@ -1197,7 +1197,7 @@
             <item>
              <widget class="QLabel" name="label_7">
               <property name="text">
-               <string>LeftTime: </string>
+               <string>LeftTime(Timeout): </string>
               </property>
              </widget>
             </item>
@@ -1297,11 +1297,17 @@
    </property>
   </action>
   <action name="actionStart">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Start</string>
    </property>
   </action>
   <action name="actionAdmit_Defeat">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Admit Defeat</string>
    </property>
