@@ -14,6 +14,7 @@ SOURCES += \
     connectserverwindow.cpp \
     constants.cpp \
     createconnectionwindow.cpp \
+    endgame.cpp \
     game.cpp \
     gameconnection.cpp \
     gamelogic.cpp \
@@ -25,6 +26,7 @@ HEADERS += \
     connectserverwindow.h \
     constants.h \
     createconnectionwindow.h \
+    endgame.h \
     game.h \
     gameconnection.h \
     gamelogic.h \
@@ -33,6 +35,7 @@ HEADERS += \
 FORMS += \
     connectserverwindow.ui \
     createconnectionwindow.ui \
+    endgame.ui \
     mainwindow.ui
 
 # Default rules for deployment.

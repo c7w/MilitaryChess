@@ -1,6 +1,7 @@
 #include "gamelogic.h"
 #include <iostream>
 #include <sstream>
+#include <time.h>
 
 GameLogic::GameLogic(QObject *parent) : QObject(parent)
 {
@@ -62,12 +63,7 @@ void GameLogic::MessageProcess(Game* game, const QString& raw_message) {
 
     // 201 InitChessboard
     if(args[0] == "201") {
-        if(game->getStatus()==HOSTING) {
-
-            game->status = WAIT_PLAY_CONFIRMATION;
-            emit game->setPrompt(formatPrompt("872657", "Please get ready!"));
-
-        } else if (game->getStatus() == CONNECTING){
+        if (game->getStatus() == CONNECTING){
             // Generate
             for (int i = 1; i <= 50; ++i) {
                 game->pieces.push_back(ChessPiece::getChesePiece(i));
@@ -77,12 +73,34 @@ void GameLogic::MessageProcess(Game* game, const QString& raw_message) {
                 game->board.push_back(args[i].toInt());
             }
             game->initIcon();
-            emit game->setPrompt(formatPrompt("872657", "Please get ready!"));
-            game->status = WAIT_PLAY_CONFIRMATION;
             emit game->writeData("201 Received");
         }
+
+        game->status = WAIT_PLAY_CONFIRMATION;
+        emit game->setPrompt(formatPrompt("872657", "Please get ready!"));
+
+        // Change Menubar: enable "Play"
+        emit game->enablePlayButton();
+
         return;
     }
+
+    // 202 Client Ready
+    if( args[0] == "202" ) {
+        if(game->role == "Server" ){
+            game->readyState[1] = true;
+            tryStartGame(game);
+        }
+    }
+
+    // 203 Game start
+    if (args[0] == "203") {
+        if (game->role != "Server") {
+            game->offensive = args[1].toInt();
+            startGameLoop(game);
+        }
+    }
+
 
     // 300 Unreveal chess
     if(args[0] == "300") {
@@ -106,8 +124,82 @@ void GameLogic::MessageProcess(Game* game, const QString& raw_message) {
         EatPieceWhileSelfDestroyed(game, args[1].toInt(), args[2].toInt());
         return;
     }
+
+    // 400 End Turn -> Start Turn
+    if( args[0] == "400" ) {
+        // Kill timer
+        if(game->timer) {
+            game->timer->stop();
+            delete game->timer;
+            game->timer = nullptr;
+        }
+
+        startTurn(game, args);
+        game->status = PLAYING_THINKING;
+    }
+
+    // 401 Win Game
+    if ( args[0] == "401" ) {
+        if (args[1] == "1") winGame(game, true);
+        else winGame(game, false);
+    }
 }
-//
+
+
+void GameLogic::onGetReady(Game *game) {
+
+    emit game->disablePlayButton();
+    emit game->setPrompt(formatPrompt("E14890", "Waiting your opponent to get ready..."));
+
+    if (game->role == "Server") {
+        game->readyState[0] = true;
+        tryStartGame(game);
+    } else {
+        emit game->writeData("202 Ready");
+    }
+}
+
+// Server side: try start game
+void GameLogic::tryStartGame(Game *game) {
+    if ( game->readyState[0] && game->readyState[1]) {
+
+        // Rand the offensive
+        srand((unsigned)time(NULL));
+        game->offensive = rand() % 2; // If 0 server takes the offensive
+        startGameLoop(game);
+
+        emit game->writeData("203 " + QString::number(game->offensive));
+    }
+}
+
+// Both side: start game loop
+void GameLogic::startGameLoop(Game *game) {
+    game->GameInfo.ColorNow = "■(Offensive)";
+    game->GameInfo.TurnCount = 0;
+    game->GameInfo.LeftTime = 20;
+    //  0 Server first
+    const bool MeFirst = (game->role == "Server" && game->offensive == 0) || (game->role != "Server" && game->offensive == 1);
+    if ( MeFirst ) {
+        game->GameInfo.ColorMe = "■(Offensive)";
+        game->GameInfo.ColorOpponent = "■(Defensive)";
+        game->status = PLAYING_THINKING;
+        emit game->setPrompt(formatPrompt("36E1CC", "Game started! You First!"));
+        startTurn(game, {});
+    } else {
+        game->GameInfo.ColorMe = "■(Defensive)";
+        game->GameInfo.TurnCount = 1;
+        game->GameInfo.ColorOpponent = "■(Offensive)";
+        game->status = PLAYING_WAITING;
+        emit game->setPrompt(formatPrompt("36E1CC", "Game started! Your opponent took the first hand!"));
+
+        // New timer
+        game->timer = new QTimer();
+        connect(game->timer, &QTimer::timeout, game, &Game::turnTimeoutOpponent);
+        game->timer->start(1000);
+    }
+    emit game->setInfo(game->GameInfo);
+
+}
 
 void GameLogic::DFS(Game *game, int initId, int next) {
     if ( AffectedRecord.Approachable.contains(next) || AffectedRecord.Eatable.contains(next) || AffectedRecord.EatableWhileSelfDestroyed.contains(next)) return;
@@ -121,26 +213,30 @@ void GameLogic::DFS(Game *game, int initId, int next) {
 
     } else {
         if (! game->pieces[toId]->revealed) { return; }
-        if ( game->pieces[initId]->canEat(game->pieces[toId]) == 1) { AffectedRecord.Eatable.insert(next); }
+        if ( game->pieces[initId]->canEat(game->pieces[toId]) == 1) {
+            if(game->pieces[toId]->getArmType() == JunQi && !game->gameState[0]) return;
+            AffectedRecord.Eatable.insert(next);
+        }
         if ( game->pieces[initId]->canEat(game->pieces[toId]) == 2) { AffectedRecord.EatableWhileSelfDestroyed.insert(next); }
     }
 }
 
-void GameLogic::GenerateRecordForPosition(Game *game, int pos) {
+int GameLogic::GenerateRecordForPosition(Game *game, int pos) {
     AffectedRecord.Approachable.clear();
     AffectedRecord.Eatable.clear();
     AffectedRecord.EatableWhileSelfDestroyed.clear();
 
     if (pos == -1) {
-        return;
+        return 0;
     }
-    qDebug() << "GenerateRecordForPosition " << pos;
+
     // First retrieve the ChessPiece of the position
     int initID = game->board[pos];
-    if ( initID == 0 ) { return; }
+    if ( initID == 0 ) { return 0; }
+    if(game->pieces[game->board[pos]]->getFaction() != game->color) return 0;
 
     ArmType arm = game->pieces[initID]->getArmType();
-    if ( arm == JunQi || arm == DiLei) return;
+    if ( arm == JunQi || arm == DiLei) return 0;
 
     int delta[] = {5,6,1,-4,-5,-6,-1,4};
     for(auto d : delta) {
@@ -149,7 +245,10 @@ void GameLogic::GenerateRecordForPosition(Game *game, int pos) {
             int toId = game->board[pos+d];
             if (toId == 0) {AffectedRecord.Approachable.insert(pos+d); continue;}
             if (! game->pieces[toId]->revealed) { continue; }
-            if ( game->pieces[initID]->canEat(game->pieces[toId]) == 1) { AffectedRecord.Eatable.insert(pos+d); continue; }
+            if ( game->pieces[initID]->canEat(game->pieces[toId]) == 1) {
+                if(game->pieces[toId]->getArmType() == JunQi && !game->gameState[0]) continue;
+                AffectedRecord.Eatable.insert(pos+d); continue;
+            }
             if ( game->pieces[initID]->canEat(game->pieces[toId]) == 2) { AffectedRecord.EatableWhileSelfDestroyed.insert(pos+d); continue; }
             continue;
         }
@@ -162,7 +261,10 @@ void GameLogic::GenerateRecordForPosition(Game *game, int pos) {
                 if(Constants::hasEdge(target, target+d) == 2) {
                     int toId = game->board[target+d];
                     if (! game->pieces[toId]->revealed) { continue; }
-                    if ( game->pieces[initID]->canEat(game->pieces[toId]) == 1) { AffectedRecord.Eatable.insert(target+d); continue; }
+                    if ( game->pieces[initID]->canEat(game->pieces[toId]) == 1) {
+                        if(game->pieces[toId]->getArmType() == JunQi && !game->gameState[0]) continue;
+                        AffectedRecord.Eatable.insert(target+d); continue;
+                    }
                     if ( game->pieces[initID]->canEat(game->pieces[toId]) == 2) { AffectedRecord.EatableWhileSelfDestroyed.insert(target+d); continue; }
                     continue;
                 }
@@ -172,6 +274,7 @@ void GameLogic::GenerateRecordForPosition(Game *game, int pos) {
 
         }
     }
+    return AffectedRecord.Approachable.size() + AffectedRecord.Eatable.size() + AffectedRecord.EatableWhileSelfDestroyed.size();
 
 }
 
@@ -228,7 +331,6 @@ void GameLogic::EatPieceWhileSelfDestroyed(Game *game, int from, int to) {
 }
 
 void GameLogic::clickBoard(Game *game, int pos) {
-    qDebug() << "Last: " << OperationRecord << " This: " << pos ;
 
     bool related = false; // Whether pass this turn
 
@@ -237,6 +339,7 @@ void GameLogic::clickBoard(Game *game, int pos) {
         game->pieces[game->board[pos]]->setRevealed();
         game->updateIcon(pos);
         emit game->writeData("300 " + QString::number(pos));
+        game->revealedHistory.push_back((Faction)(game->board[pos]%2));
         related = true;
     }
 
@@ -278,7 +381,9 @@ void GameLogic::clickBoard(Game *game, int pos) {
 
     // Generate new related positions
     if (related) GenerateRecordForPosition(game, -1);
-    else GenerateRecordForPosition(game, pos);
+    else {
+        GenerateRecordForPosition(game, pos);
+    }
 
     // Make styles
     if (pos >= 0) {
@@ -295,8 +400,174 @@ void GameLogic::clickBoard(Game *game, int pos) {
 
     OperationRecord = pos;
     if (related) {
-        // Pass turn
+        endTurn(game);
     }
 
+}
 
+void GameLogic::startTurn(Game *game, const QVector<QString> &args) {
+    if (game->color == None && args.length() > 1) {
+        if (args[1] == "Blue") game->color = Blue;
+        if (args[1] == "Red") game->color = Red;
+        game->GameInfo.ColorMe = formatPrompt(args[1] == "Blue" ? "0000ff" : "ff0000", "■");
+    }
+    game->GameInfo.TurnCount += 1;
+    if (game->GameInfo.TurnCount == 21) emit game->enableAdmitDefeatButton();
+    game->GameInfo.ColorNow = game->GameInfo.ColorMe;
+    game->GameInfo.LeftTime = 20;
+    emit game->setPrompt(formatPrompt("27E876", "It's your turn!"));
+    emit game->setInfo(game->GameInfo);
+    // Start timer
+    game->timer = new QTimer();
+    connect(game->timer, &QTimer::timeout, game, &Game::turnTimeout);
+    game->timer->start(1000);
+
+}
+
+void GameLogic::turnTimeout(Game *game) {
+    game->GameInfo.LeftTime -= 1;
+    emit game->setInfo(game->GameInfo);
+
+    if (game->GameInfo.LeftTime == 0) {
+        game->GameInfo.TimeOut -= 1;
+        emit game->setInfo(game->GameInfo);
+
+        if (game->GameInfo.TimeOut == 0) {            
+            clickBoard(game, -1);
+            winGame(game, false);
+        } else {
+            clickBoard(game, -1);
+            endTurn(game);
+        }
+    }
+}
+
+void GameLogic::turnTimeoutOpponent(Game *game) {
+    if (game->GameInfo.LeftTime > 0) {
+        game->GameInfo.LeftTime -= 1;
+        emit game->setInfo(game->GameInfo);
+    }
+}
+
+void GameLogic::endTurn(Game *game) {
+    game->status = PLAYING_WAITING;
+
+    // End timer
+    if (game->timer) {
+        game->timer->stop();
+        delete game->timer;
+        game->timer = nullptr;
+    }
+
+    // If color was not decided, judge.
+    QString sendArgs = "";
+    if(game->color == None && game->revealedHistory.length() > 1) {
+        // Look up revealed history
+        int l = game->revealedHistory.length();
+        if(game->revealedHistory[l-1] == game->revealedHistory[l-2]) {
+            game->color = game->revealedHistory[l-1];
+            game->GameInfo.ColorMe = formatPrompt(game->color == Blue ? "0000ff" : "ff0000", "■");
+            sendArgs += game->color == Blue ? " Red" : " Blue";
+        }
+    }
+
+    // Judge if JunQi can be eaten
+    // 45 47 49 Red DiLei
+    // 46 48 50 Blue DiLei
+    if(game->color == Blue){
+        if (game->pieces[45]->eaten &&  game->pieces[47]->eaten && game->pieces[49]->eaten) {
+            game->gameState[0] = true;
+        }
+    } else if (game->color == Red) {
+        if (game->pieces[46]->eaten &&  game->pieces[48]->eaten && game->pieces[50]->eaten) {
+            game->gameState[0] = true;
+        }
+    }
+
+    // Judge win and lose: JunQi was eaten; no chesspieces to go
+    // 1 Red JunQi
+    // 2 Blue JunQi
+    if (game->pieces[1]->eaten) {winGame(game, game->color == Blue); return;}
+    if (game->pieces[2]->eaten) {winGame(game, game->color == Red); return;}
+    // todo: No chesspieces to go
+    if(game->color != None) {
+        bool cannotMove = true;
+        for(int i = 1; i <= 50; ++i) {
+            if (game->pieces[i]->revealed == false) {cannotMove = false; break;}
+        }
+        if (cannotMove) {
+
+            // self
+            for(int i = 0; i < 60; ++i) {
+                if(GenerateRecordForPosition(game, i) > 0){
+                    cannotMove = false; break;
+                }
+            }
+            GenerateRecordForPosition(game, -1);
+            // if self cannotMove then enemy wins
+            if(cannotMove) {winGame(game, false); return;}
+
+            cannotMove = true;
+            // enemy
+            game->color = game->color == Blue? Red: Blue;
+            for(int i = 0; i < 60; ++i) {
+                if(GenerateRecordForPosition(game, i) > 0){
+                    cannotMove = false; break;
+                }
+            }
+            game->color = game->color == Blue? Red: Blue;
+            GenerateRecordForPosition(game, -1);
+            // if enemy cannot move then self wins
+            if(cannotMove) {winGame(game, true); return;}
+        }
+
+    }
+
+    // If game can continue !!
+    // Reset game info
+    game->GameInfo.TurnCount += 1;
+    game->GameInfo.ColorNow = game->GameInfo.ColorOpponent;
+    game->GameInfo.LeftTime = 20;
+    emit game->setPrompt(formatPrompt("27DDE8", "It's your opponent's turn!"));
+    emit game->setInfo(game->GameInfo);
+    if (game->GameInfo.TurnCount == 21) emit game->enableAdmitDefeatButton();
+
+    // Sending signals through socket
+    emit game->writeData("400" + sendArgs);
+
+    // New timer
+    game->timer = new QTimer();
+    connect(game->timer, &QTimer::timeout, game, &Game::turnTimeoutOpponent);
+    game->timer->start(1000);
+
+}
+
+void GameLogic::winGame(Game *game, bool isMe) {
+    if (game->getStatus() == END) return;
+    // Kill timer
+    if (game->timer) {
+        game->timer->stop();
+        delete game->timer;
+        game->timer = nullptr;
+    }
+
+    QString args = "";
+
+    if (isMe) args += " 0";
+    else {args += " 1";}
+
+
+    emit game->writeData("401" + args);
+    emit game->setPrompt(formatPrompt("000000", isMe ? "You Win!" : "You Lose!"));
+
+    game->status = END;
+
+    EndGame* eg;
+    if(isMe) {
+        eg = new EndGame("You Win!");
+    } else {
+        eg = new EndGame("You Lose!");
+    }
+    eg->setWindowTitle("Game Ended!");
+    eg->show();
 }

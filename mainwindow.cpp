@@ -16,8 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->Map->setPixmap(QPixmap::fromImage(img).scaled(ui->Map->size(), Qt::KeepAspectRatio));
     ui->Map->raise();
 
-    this->game = new Game();
-    connect(this->game, &Game::setPrompt, this, &MainWindow::setPrompt);
+    initGame();
 
     // Store icons into the Vector
     icons = new QVector<QLabel*>();
@@ -29,7 +28,29 @@ MainWindow::MainWindow(QWidget *parent)
     for(int i = 0; i < 60; ++i){
         icons->at(i)->installEventFilter(this);
     }
+
+}
+
+void MainWindow::initGame() {
+    this->game = new Game();
+    connect(this->game, &Game::setPrompt, this, &MainWindow::setPrompt);
+    connect(this->game, &Game::enablePlayButton, this, [=](){this->ui->actionStart->setEnabled(true);});
+    connect(this->game, &Game::disablePlayButton, this, [=](){this->ui->actionStart->setEnabled(false);});
+    connect(this, &MainWindow::playerGetReady, this->game, &Game::onGetReady);
+    connect(this->game, &Game::setInfo, this, [=](Game::Info info){
+        this->ui->ColorMe->setText(info.ColorMe);
+        this->ui->TimeOut->setText(QString::number(info.TimeOut));
+        this->ui->TurnCount->setText(QString::number(info.TurnCount));
+        this->ui->TimeLeft->setText(info.LeftTime < 0 ? "-" : QString::number(info.LeftTime));
+    });
     connect(this, &MainWindow::pressedBoard, this->game, &Game::onPressedBoard);
+    connect(this->game, &Game::enableAdmitDefeatButton, this, [=]() {this->ui->actionAdmit_Defeat->setEnabled(true);});
+    connect(this, &MainWindow::playerAdmitDefeat, this->game, &Game::onAdmitDefeat);
+}
+
+void MainWindow::clearGame() {
+    ui->Map->raise();
+    this->game->deleteLater();
 }
 
 MainWindow::~MainWindow()
@@ -116,6 +137,19 @@ void MainWindow::on_actionCancel_the_connection_triggered()
     }
 }
 
+// Menubar: get ready
+void MainWindow::on_actionStart_triggered()
+{
+    emit playerGetReady();
+}
+
+// Menubar: admit defeat
+void MainWindow::on_actionAdmit_Defeat_triggered()
+{
+    emit playerAdmitDefeat();
+}
+
+
 
 // Mainwindow: Event Filter
 bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
@@ -142,5 +176,9 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     }
     return QMainWindow::eventFilter(obj, event);
 }
+
+
+
+
 
 

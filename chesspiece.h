@@ -32,7 +32,7 @@ public:
     int getPos() const {return currentPos;}
 
     void setRevealed() { this->revealed = true; }
-    void setEaten() { this->revealed = true; }
+    void setEaten() { this->eaten = true; }
 
     EnumChessPiece getEnumChessPiece() {return (EnumChessPiece)(this->getArmType() * 2 + this->getFaction()); }
     EnumChessPiece getEnumChessPieceIcon() {return this->revealed ? getEnumChessPiece() : Unknown; }

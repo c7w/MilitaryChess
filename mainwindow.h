@@ -19,6 +19,8 @@ public:
 
 signals:
     void pressedBoard(int pos);
+    void playerGetReady();
+    void playerAdmitDefeat();
 
 private slots:
     void on_actionConnect_to_server_triggered();
@@ -33,13 +35,17 @@ private slots:
 
     void setPrompt(const QString& message);
 
+    void on_actionStart_triggered();
+
+    void on_actionAdmit_Defeat_triggered();
+
 private:
     Ui::MainWindow *ui;
     QDialog* childWindow = nullptr;
     QVector<QLabel*>* icons;
-
-protected:
     Game* game;
     bool eventFilter(QObject *obj, QEvent *event);
+    void initGame();
+    void clearGame();
 };
 #endif // MAINWINDOW_H

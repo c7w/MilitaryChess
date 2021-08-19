@@ -32,7 +32,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>Marine Chess</string>
+   <string>Military Chess</string>
   </property>
   <property name="whatsThis">
    <string comment="cc" extracomment="assd"/>
@@ -1090,10 +1090,13 @@
        <x>1</x>
        <y>0</y>
        <width>491</width>
-       <height>47</height>
+       <height>52</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>2</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
@@ -1173,12 +1176,12 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Current: </string>
+               <string>TimeOut:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="ColorNow">
+             <widget class="QLabel" name="TimeOut">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -1197,7 +1200,7 @@
             <item>
              <widget class="QLabel" name="label_7">
               <property name="text">
-               <string>LeftTime(Timeout): </string>
+               <string>LeftTime: </string>
               </property>
              </widget>
             </item>
@@ -1239,6 +1242,9 @@
           <width>16777215</width>
           <height>16777210</height>
          </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">font: 75 9pt &quot;Segoe UI&quot;;</string>
         </property>
         <property name="text">
          <string>Welcome!</string>

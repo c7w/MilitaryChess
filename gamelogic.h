@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "game.h"
+#include "endgame.h"
 
 class Game;
 
@@ -21,17 +22,27 @@ private:
     static AR AffectedRecord;
 
     static void DFS(Game* game, int initId, int next);
-    static void GenerateRecordForPosition(Game* game, int pos);
+    static int GenerateRecordForPosition(Game* game, int pos);
 
     static void MovePiece(Game* game, int from, int to);
     static void EatPiece(Game* game, int from, int to);
     static void EatPieceWhileSelfDestroyed(Game* game, int from, int to);
 
-
 public:
     explicit GameLogic(QObject *parent = nullptr);
+
+    static void onGetReady(Game* game);
+    static void tryStartGame(Game* game);
+    static void startGameLoop(Game* game);
+    static void startTurn(Game* game, const QVector<QString>& args);
+    static void endTurn(Game* game);
+    static void turnTimeout(Game* game);
+    static void turnTimeoutOpponent(Game* game);
+
     static void MessageProcess(Game* game, const QString& message);
     static void clickBoard(Game* game, int pos);
+
+    static void winGame(Game* game, bool isMe);
 
 
 signals:

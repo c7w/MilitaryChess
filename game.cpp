@@ -1,4 +1,5 @@
 #include "game.h"
+#include <random>
 
 Game::Game()
     : status(OFFLINE)
@@ -19,6 +20,7 @@ void Game::startConnection(QString role, QString ip_addr) {
     // Create the connection
     emit initConnection();
     // Change game status
+    this->role = role;
     if (role=="Server") {
         status = HOSTING;
     } else {
@@ -45,6 +47,9 @@ Game::~Game() {
 
     for (auto x : this->pieces) delete x;
 }
+
+void Game::onGetReady() {GameLogic::onGetReady(this);}
+void Game::onAdmitDefeat() { GameLogic::winGame(this, false); }
 
 void Game::getData(const QString& data) {
     GameLogic::MessageProcess(this, data);
@@ -77,8 +82,9 @@ void Game::initChessboard() {
     }
 
     // Shuffle, using std::random_shuffle
-    QVector<int> tempVector;
+    std::vector<int> tempVector;
     for(int i = 1; i <=50; ++i) tempVector.push_back(i);
+    srand((unsigned)time(NULL));
     std::random_shuffle(tempVector.begin(), tempVector.end());
 
     // Fill the shuffled result into the board
@@ -103,8 +109,14 @@ void Game::initChessboard() {
 
 // Slots function for onPressedBoard
 void Game::onPressedBoard(int pos) {
-    // TODO: process click event
-    if (this->getStatus() != WAIT_PLAY_CONFIRMATION) return;
-    // if(this->getStatus() != PLAYING_THINKING) return;
+    if(this->getStatus() != PLAYING_THINKING && this->getStatus() != PLAYING_WAITING) return;
     GameLogic::clickBoard(this, pos);
+}
+
+void Game::turnTimeout() {
+    GameLogic::turnTimeout(this);
+}
+
+void Game::turnTimeoutOpponent() {
+    GameLogic::turnTimeoutOpponent(this);
 }
