@@ -125,7 +125,7 @@ void GameLogic::MessageProcess(Game* game, const QString& raw_message) {
         return;
     }
 
-    // 400 End Turn -> Start Turn
+    // 400 Switch Turn
     if( args[0] == "400" ) {
         // Kill timer
         if(game->timer) {
