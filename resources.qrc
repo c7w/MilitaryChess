@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>assets/image/chessboard.png</file>
-        <file>assets/image/chessboard_background.jpg</file>
+        <file>assets/image/chessboard_background.png</file>
         <file>assets/image/chess_unknown.png</file>
         <file>assets/image/chesspieces/DiLeiB.png</file>
         <file>assets/image/chesspieces/DiLeiR.png</file>

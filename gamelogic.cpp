@@ -165,7 +165,7 @@ void GameLogic::tryStartGame(Game *game) {
 
         // Rand the offensive
         srand((unsigned)time(NULL));
-        game->offensive = rand() % 2; // If 0 server takes the offensive
+        game->offensive = rand() % 2; // If 0 server takes the offensive, and 1 for client
         startGameLoop(game);
 
         emit game->writeData("203 " + QString::number(game->offensive));
@@ -333,9 +333,9 @@ void GameLogic::EatPieceWhileSelfDestroyed(Game *game, int from, int to) {
 void GameLogic::clickBoard(Game *game, int pos) {
 
     bool related = false; // Whether pass this turn
-
+    if (game->getStatus() != PLAYING_THINKING) related = true;
     // Reveal Unknown
-    if (pos >= 0 && game->board[pos] != 0 && !game->pieces[game->board[pos]]->revealed) {
+    if (!related && pos >= 0 && game->board[pos] != 0 && !game->pieces[game->board[pos]]->revealed) {
         game->pieces[game->board[pos]]->setRevealed();
         game->updateIcon(pos);
         emit game->writeData("300 " + QString::number(pos));
@@ -373,7 +373,7 @@ void GameLogic::clickBoard(Game *game, int pos) {
     if(OperationRecord >= 0) {
         game->icons->at(OperationRecord)->setStyleSheet("");
         int x;
-        foreach(x , qAsConst(AffectedRecord.Approachable)) game->icons->at(x)->setStyleSheet("");
+        foreach(x , AffectedRecord.Approachable) game->icons->at(x)->setStyleSheet("");
         foreach(x , AffectedRecord.Eatable) game->icons->at(x)->setStyleSheet("");
         foreach(x , AffectedRecord.EatableWhileSelfDestroyed) game->icons->at(x)->setStyleSheet("");
     }
@@ -399,7 +399,7 @@ void GameLogic::clickBoard(Game *game, int pos) {
 
 
     OperationRecord = pos;
-    if (related) {
+    if (related && game->getStatus() == PLAYING_THINKING) {
         endTurn(game);
     }
 

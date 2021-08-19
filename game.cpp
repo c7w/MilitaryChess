@@ -109,7 +109,6 @@ void Game::initChessboard() {
 
 // Slots function for onPressedBoard
 void Game::onPressedBoard(int pos) {
-    if(this->getStatus() != PLAYING_THINKING && this->getStatus() != PLAYING_WAITING) return;
     GameLogic::clickBoard(this, pos);
 }
 

@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     // Generate UI
     ui->setupUi(this);
-    QImage img(":/assets/image/chessboard_background.jpg");
+    QImage img(":/assets/image/chessboard_background.png");
     ui->Map->setPixmap(QPixmap::fromImage(img).scaled(ui->Map->size(), Qt::KeepAspectRatio));
     ui->Map->raise();
 
