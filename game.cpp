@@ -28,21 +28,33 @@ void Game::startConnection(QString role, QString ip_addr) {
     }
 }
 
-bool Game::cancelConnection() {
-    if(status == HOSTING || status == CONNECTING || status == WAIT_PLAY_CONFIRMATION) {
-        connection->deleteLater();
-        connectionThread.quit();
-        connectionThread.wait();
-        status = OFFLINE;
-        return true;
+void Game::cancelConnection() {
+    connectionThread.quit();
+    connectionThread.wait();
+    if (connection) {
+        delete connection;
+        connection = nullptr;
     }
-    return false;
+    status = OFFLINE;
 
+    color = None;
+    gameState = {false, false};
+    readyState = {false, false};
+    board.clear();
+    for (auto x : pieces) delete x;
+    for (auto x : *icons) x->setPixmap(QPixmap::fromImage(Constants::getImage(Empty).scaled(x->size(), Qt::KeepAspectRatio)));
+    pieces = {nullptr,}; // [1, 50], takes control of 50 chess pieces in initID order.
+
+    if(timer) {
+        timer->stop();
+        delete timer;
+        timer = nullptr;
+    }
+    revealedHistory.clear();
 }
 
 Game::~Game() {
-    connectionThread.quit();
-    connectionThread.wait();
+    cancelConnection();
     delete icons;
 
     for (auto x : this->pieces) delete x;

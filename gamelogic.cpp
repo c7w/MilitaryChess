@@ -148,7 +148,6 @@ void GameLogic::MessageProcess(Game* game, const QString& raw_message) {
 
 void GameLogic::onGetReady(Game *game) {
 
-    emit game->disablePlayButton();
     emit game->setPrompt(formatPrompt("E14890", "Waiting your opponent to get ready..."));
 
     if (game->role == "Server") {

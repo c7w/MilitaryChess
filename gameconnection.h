@@ -30,9 +30,11 @@ private:
     bool startServer();
     bool startClient();
 
-    QString role;
     QTcpServer* server = nullptr;
     QTcpSocket* client = nullptr;
+
+    QString role;
+
 
     QHostAddress IP;
 

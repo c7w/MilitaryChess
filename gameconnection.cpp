@@ -47,7 +47,6 @@ bool GameConnection::startClient() {
     connect(client, &QTcpSocket::readyRead, this, &GameConnection::readMessage);
     client->connectToHost(IP, 23333);
 
-
     return true;
 }
 
@@ -56,6 +55,7 @@ void GameConnection::acquiredNewConnectionFromClient() {
     emit MessageToGame("0 F4A460 Found new connection from client!");
     client = server->nextPendingConnection();
     connect(client, &QTcpSocket::readyRead, this, &GameConnection::readMessage);
+    connect(client, &QTcpSocket::errorOccurred, this,  ([=](){emit MessageToGame("0 E3170D Connection Failed! Please cancel the connection and try again!");})  );
     writeMessage("200");
 }
 
@@ -67,9 +67,9 @@ void GameConnection::readMessage() {
 
 // Used for Universal: writeMessage into Socket
 void GameConnection::writeMessage(const QString& message) {
-    int sendStatus = client->write(message.toStdString().c_str());
-    if (sendStatus == -1){
-        // TODO: catch network error
+    int result = client->write(message.toStdString().c_str());
+    if (result == -1) {
+        emit client->errorOccurred(QTcpSocket::SocketTimeoutError);
     }
 }
 
@@ -79,6 +79,12 @@ void GameConnection::GameToMessage(const QString& message) {
 }
 
 GameConnection::~GameConnection() {
-    delete server;
-    delete client;
+    if (server) {
+        server->deleteLater();
+        server = nullptr;
+    }
+    if (client) {
+        client->deleteLater();
+        server = nullptr;
+    }
 }

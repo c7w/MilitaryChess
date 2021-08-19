@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     // Generate UI
     ui->setupUi(this);
-    QImage img(":/assets/image/chessboard_background.png");
+    QImage img(":/assets/image/chessboard_bg.png");
     ui->Map->setPixmap(QPixmap::fromImage(img).scaled(ui->Map->size(), Qt::KeepAspectRatio));
     ui->Map->raise();
 
@@ -35,7 +35,6 @@ void MainWindow::initGame() {
     this->game = new Game();
     connect(this->game, &Game::setPrompt, this, &MainWindow::setPrompt);
     connect(this->game, &Game::enablePlayButton, this, [=](){this->ui->actionStart->setEnabled(true);});
-    connect(this->game, &Game::disablePlayButton, this, [=](){this->ui->actionStart->setEnabled(false);});
     connect(this, &MainWindow::playerGetReady, this->game, &Game::onGetReady);
     connect(this->game, &Game::setInfo, this, [=](Game::Info info){
         this->ui->ColorMe->setText(info.ColorMe);
@@ -127,26 +126,33 @@ void MainWindow::on_actionCreate_the_connection_triggered()
 // Menubar: cancel the connection
 void MainWindow::on_actionCancel_the_connection_triggered()
 {
-    if(game->cancelConnection()) {
-        // Update UI
-        ui->actionCreate_the_connection->setEnabled(true);
-        ui->actionConnect_to_server->setEnabled(true);
-        ui->actionCancel_the_connection->setEnabled(false);
-        this->setWindowTitle("Military Chess (Connection Aborted)");
-        ui->Prompt->setText("<p style=\"color: #E3170D\">Connection Aborted!</p>");
-    }
+    this->game->cancelConnection();
+    // Update UI
+    ui->actionCreate_the_connection->setEnabled(true);
+    ui->actionConnect_to_server->setEnabled(true);
+    ui->actionCancel_the_connection->setEnabled(false);
+    ui->actionAdmit_Defeat->setEnabled(false);
+    ui->actionStart->setEnabled(false);
+    this->setWindowTitle("Military Chess (Connection Aborted)");
+    ui->Prompt->setText("<p style=\"color: #E3170D\">Connection Aborted!</p>");
+
+    QImage img(":/assets/image/chessboard_bg.png");
+    ui->Map->setPixmap(QPixmap::fromImage(img).scaled(ui->Map->size(), Qt::KeepAspectRatio));
+    ui->Map->raise();
 }
 
 // Menubar: get ready
 void MainWindow::on_actionStart_triggered()
 {
     emit playerGetReady();
+    ui->actionStart->setEnabled(false);
 }
 
 // Menubar: admit defeat
 void MainWindow::on_actionAdmit_Defeat_triggered()
 {
     emit playerAdmitDefeat();
+    ui->actionAdmit_Defeat->setEnabled(false);
 }
 
 
