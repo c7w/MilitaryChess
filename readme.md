@@ -122,7 +122,7 @@ If you are a student taking this course years later, please **DO NOT** copy any 
 
 <s>虽然也想到了使用 Rank 来控制棋子行为的想法，但这样很不 OOP ，况且用 Python 序列化地生成出 C++ 代码类来也并不困难</s>
 
-#### Enumations
+#### Enumerations
 
 为代码的可读性考虑，创建了 `ArmType`, `Faction`, `EnumChessPiece` 等等枚举类.
 
@@ -198,7 +198,7 @@ Reference:
 
 ### 主界面
 
-![image-20210819221017194](https://i.loli.net/2021/08/19/XiMkRbvNdCH5GOF.png)
+<img src="https://i.loli.net/2021/08/19/XiMkRbvNdCH5GOF.png" alt="image-20210819221017194" style="zoom:50%;" />
 
 + 上方：菜单栏，游戏状态信息，提示信息
 + 下方
