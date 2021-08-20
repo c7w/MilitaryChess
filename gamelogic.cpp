@@ -259,7 +259,9 @@ int GameLogic::GenerateRecordForPosition(Game *game, int pos) {
                 if(game->pieces[toId]->getArmType() == JunQi && !game->gameState[0]) continue;
                 AffectedRecord.Eatable.insert(pos+d); continue;
             }
-            if ( game->pieces[initID]->canEat(game->pieces[toId]) == 2) { AffectedRecord.EatableWhileSelfDestroyed.insert(pos+d); continue; }
+            if ( game->pieces[initID]->canEat(game->pieces[toId]) == 2) {
+                AffectedRecord.EatableWhileSelfDestroyed.insert(pos+d); continue;
+            }
             continue;
         }
         if(hasEdge == 2) {
@@ -275,7 +277,9 @@ int GameLogic::GenerateRecordForPosition(Game *game, int pos) {
                         if(game->pieces[toId]->getArmType() == JunQi && !game->gameState[0]) continue;
                         AffectedRecord.Eatable.insert(target+d); continue;
                     }
-                    if ( game->pieces[initID]->canEat(game->pieces[toId]) == 2) { AffectedRecord.EatableWhileSelfDestroyed.insert(target+d); continue; }
+                    if ( game->pieces[initID]->canEat(game->pieces[toId]) == 2) {
+                        AffectedRecord.EatableWhileSelfDestroyed.insert(target+d); continue;
+                    }
                     continue;
                 }
             } else {

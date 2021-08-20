@@ -390,8 +390,8 @@ public:
 
         // Judge if can eat... After generating codes, finish here.
         // ZhaDan, SiLing, JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi, DiLei
-        QVector<ArmType> canEat = { };
-        QVector<ArmType> canEatWhileSelfDestroy = { ZhaDan, SiLing, JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, JunQi, DiLei };
+        QVector<ArmType> canEat = { JunQi };
+        QVector<ArmType> canEatWhileSelfDestroy = { ZhaDan, SiLing, JunZhang, ShiZhang, LvZhang, TuanZhang, YingZhang, LianZhang, PaiZhang, GongBing, DiLei };
 
         // Return 1 if can eat
         // Return 2 if can eat while self-destroyed
