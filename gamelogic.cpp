@@ -143,6 +143,17 @@ void GameLogic::MessageProcess(Game* game, const QString& raw_message) {
         if (args[1] == "1") winGame(game, true);
         else winGame(game, false);
     }
+
+    // 402 Connection Error
+    if ( args[0] == "402" ) {
+        // Kill timer
+        if(game->timer) {
+            game->timer->stop();
+            delete game->timer;
+            game->timer = nullptr;
+        }
+        game->status = END;
+    }
 }
 
 
@@ -414,7 +425,7 @@ void GameLogic::startTurn(Game *game, const QVector<QString> &args) {
     if (game->GameInfo.TurnCount == 21) emit game->enableAdmitDefeatButton();
     game->GameInfo.ColorNow = game->GameInfo.ColorMe;
     game->GameInfo.LeftTime = 20;
-    emit game->setPrompt(formatPrompt("27E876", "It's your turn!"));
+    emit game->setPrompt(formatPrompt("6232E3", "It's your turn!"));
     emit game->setInfo(game->GameInfo);
     // Start timer
     game->timer = new QTimer();
@@ -527,7 +538,7 @@ void GameLogic::endTurn(Game *game) {
     game->GameInfo.TurnCount += 1;
     game->GameInfo.ColorNow = game->GameInfo.ColorOpponent;
     game->GameInfo.LeftTime = 20;
-    emit game->setPrompt(formatPrompt("27DDE8", "It's your opponent's turn!"));
+    emit game->setPrompt(formatPrompt("921855", "It's your opponent's turn!"));
     emit game->setInfo(game->GameInfo);
     if (game->GameInfo.TurnCount == 21) emit game->enableAdmitDefeatButton();
 

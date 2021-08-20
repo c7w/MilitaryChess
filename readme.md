@@ -14,7 +14,7 @@ Homework 1 for 2020-2021 Summer Course, CST.
 
 Would be made public after the final submission date of the homework and grading process.
 
-If you are a student taking this course years later, please **DO NOT** copy any of these files directly into your homework. The developer will not be responsible for any possible loss.
+If you are a student taking this course years later, please **DO NOT** copy any of these files directly into your homework. The developer will not be responsible for any possible loss of you.
 
 ## 报文及进程间通信机理
 
@@ -86,14 +86,21 @@ If you are a student taking this course years later, please **DO NOT** copy any 
 
 ### Game <-> GameConnection (多线程间)
 
-除了上述报文之外，为方便进行提示文字的更改，在线程间通信时还增加了以下规则：
+除了上述报文之外，为方便进行提示文字的更改及连接状态的控制，在线程间通信时还增加了以下规则：
 
-#### `0 <Color> <Message>`
+##### `0` Set Prompt Info
 
-+ 说明：设置主界面的说明文字
++ 使用格式：`0 <Color> <Message>`
+
++ 用于设置主界面的说明文字
 + 参数
-  + Color: 报文的颜色(六位十六进制数，或是HTML支持的颜色标签)，如ff0000
+  + Color: 报文的颜色(六位十六进制数，或是HTML支持的颜色标签)，如 ff0000, green 等.
   + Message: 说明文字.
+
+##### `402` Connection Failed
+
++ 对方进程连接断开时发送
++ 强制将本地游戏切换为 `End` 状态.
 
 ## 常量设计与主要算法
 
@@ -198,7 +205,7 @@ Reference:
 
 ### 主界面
 
-<img src="https://i.loli.net/2021/08/19/XiMkRbvNdCH5GOF.png" alt="image-20210819221017194" style="zoom:50%;" />
+<img src="https://i.loli.net/2021/08/19/XiMkRbvNdCH5GOF.png" alt="image-20210819221017194" style="zoom: 33%;" />
 
 + 上方：菜单栏，游戏状态信息，提示信息
 + 下方
@@ -234,3 +241,5 @@ Reference:
 
 
 *First edited by c7w, 2021-8-19 22:18:46.*
+
+*Updated by c7w, 2021-8-20 09:46:08.*

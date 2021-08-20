@@ -29,14 +29,16 @@ void Game::startConnection(QString role, QString ip_addr) {
 }
 
 void Game::cancelConnection() {
+    // Deconstruct connection
     connectionThread.quit();
     connectionThread.wait();
     if (connection) {
         delete connection;
         connection = nullptr;
     }
-    status = OFFLINE;
 
+    // Reset local variables
+    status = OFFLINE;
     color = None;
     gameState = {false, false};
     readyState = {false, false};
@@ -51,6 +53,15 @@ void Game::cancelConnection() {
         timer = nullptr;
     }
     revealedHistory.clear();
+
+    // Reset game info
+    this->GameInfo.ColorMe = "";
+    this->GameInfo.ColorNow = "";
+    this->GameInfo.ColorOpponent = "";
+    this->GameInfo.LeftTime = 20;
+    this->GameInfo.TimeOut = 3;
+    this->GameInfo.TurnCount = 0;
+    emit this->setInfo(this->GameInfo);
 }
 
 Game::~Game() {
